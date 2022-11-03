@@ -1,43 +1,50 @@
 main :: IO ()
-main = putStrLn html
+main = putStrLn (render myhtml)
 
-newtype Html = Html String
+myhtml :: Html
+myhtml = html_
+    "austrowgc/lhbg"
+    (append_
+        (h1_ "Hello, World!")
+        (append_
+            (p_ "paragraph #1")
+            (p_ "paragraph #2")
+        )
+    )
 
-newtype Elem = Elem String
+newtype Html = Html String -- the whole document
 
-getHtmlString :: Html -> String
-getHtmlString (Html str) = str
+newtype Structure = Structure String -- a tag and its contents
 
-getElemString :: Elem -> String
-getElemString (Elem str) = str
+type Title = String
+
+-- getHtmlString :: Html -> String
+-- getHtmlString (Html str) = str
+
+getStructureString :: Structure -> String
+getStructureString (Structure str) = str
 
 el :: String -> String -> String
-el tag inner =
-  "<" <> tag <> ">" <> inner <> "</" <> tag <> ">"
+el tag inner = "<" <> tag <> ">" <> inner <> "</" <> tag <> ">"
 
-p_ :: String -> String
-p_ = el "p"
+p_ :: String -> Structure
+p_ = Structure . el "p"
 
-h1_ :: String -> String
-h1_ = el "h1"
+h1_ :: String -> Structure
+h1_ = Structure . el "h1"
 
-title_ :: String -> String
-title_ = el "title"
+html_ :: Title -> Structure -> Html
+html_ title content = Html
+    (el "html"
+        (el "head" (el "title" title)
+            <> el "body" (getStructureString content)
+        )
+    )
 
-body_ :: String -> String
-body_ = el "body"
+append_ :: Structure -> Structure -> Structure
+append_ (Structure a) (Structure b) = Structure (a <> b)
 
-head_ :: String -> String
-head_ = el "head"
-
-html_ :: String -> String
-html_ = el "html"
-
-doc :: String -> String -> String
-doc title body = html_ (head_ (title_ title) <> body_ body)
-
-html :: String
-html =
-  doc
-    "austrowGC/lhbg"
-    ((h1_ "Hello, World!") <> p_ "Learning Haskell Blog Generator")
+render :: Html -> String
+render html =
+    case html of
+        Html string -> string
