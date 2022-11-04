@@ -23,6 +23,15 @@ p_ = Structure . el "p" . escape
 h1_ :: String -> Structure
 h1_ = Structure . el "h1" . escape
 
+ul_ :: [Structure] -> Structure
+ul_ =  Structure . el "ul" . concatMap (el "li" . getStructureString)
+
+ol_ :: [Structure] -> Structure
+ol_ = Structure . el "ol" . concatMap (el "li" . getStructureString)
+
+code_ :: String -> Structure
+code_ = Structure . el "pre" . escape
+
 html_ :: Title -> Structure -> Html
 html_ title content = Html
     (el "html"
