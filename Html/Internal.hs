@@ -54,7 +54,7 @@ escape =
         escapeChar c =
             case c of
                 '<' -> "&lt;"
-                '>' -> "&rt;"
+                '>' -> "&gt;"
                 '&' -> "&amp;"
                 '"' -> "&quot;"
                 '\'' -> "&#39;"
