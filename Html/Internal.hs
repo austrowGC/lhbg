@@ -1,10 +1,10 @@
 -- Html/Internal.hs
-module Html.Internal where
+module Html.Internal
+where
 
+import Markup
 
-newtype Html = Html String -- the whole document
-
-newtype Structure = Structure String -- a tag and its contents
+newtype Html = Html String
 
 type Title = String
 
@@ -12,7 +12,11 @@ getHtmlString :: Html -> String
 getHtmlString (Html str) = str
 
 getStructureString :: Structure -> String
-getStructureString (Structure str) = str
+getStructureString struct =
+    case struct of
+        Structure str -> str
+        Heading num str -> str
+-- need to deal with Heading pattern somehow
 
 el :: String -> String -> String
 el tag inner = "<" <> tag <> ">" <> inner <> "</" <> tag <> ">"
@@ -40,8 +44,12 @@ html_ title content = Html
         )
     )
 
-append_ :: Structure -> Structure -> Structure
-append_ (Structure a) (Structure b) = Structure (a <> b)
+-- append_ :: Structure -> Structure -> Structure
+-- append_ (Structure a) (Structure b) = Structure (a <> b)
+
+instance Semigroup Structure where
+    (<>) c1 c2 =
+        Structure (getStructureString c1 <> getStructureString c2)
 
 render :: Html -> String
 render html =
@@ -61,4 +69,3 @@ escape =
                 _ -> [c]
     in
         concatMap escapeChar
-
