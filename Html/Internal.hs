@@ -2,9 +2,9 @@
 module Html.Internal
 where
 
-import Markup
-
 newtype Html = Html String
+
+newtype Structure = Structure String
 
 type Title = String
 
@@ -12,11 +12,9 @@ getHtmlString :: Html -> String
 getHtmlString (Html str) = str
 
 getStructureString :: Structure -> String
-getStructureString struct =
-    case struct of
+getStructureString a =
+    case a of
         Structure str -> str
-        Heading num str -> str
--- need to deal with Heading pattern somehow
 
 el :: String -> String -> String
 el tag inner = "<" <> tag <> ">" <> inner <> "</" <> tag <> ">"
@@ -44,12 +42,9 @@ html_ title content = Html
         )
     )
 
--- append_ :: Structure -> Structure -> Structure
--- append_ (Structure a) (Structure b) = Structure (a <> b)
-
 instance Semigroup Structure where
     (<>) c1 c2 =
-        Structure (getStructureString c1 <> getStructureString c2)
+        Structure $ getStructureString c1 <> getStructureString c2
 
 render :: Html -> String
 render html =
