@@ -20,8 +20,10 @@ data Structure
     | CodeBlock [String]
     deriving (Show, Eq)
 
+parse :: String -> [Structure]
 parse = parseLines Nothing . lines
 
+parseLines :: Maybe Structure -> [String] -> Document
 parseLines context txts =
     case txts of
         [] -> maybeToList context
@@ -50,9 +52,9 @@ parseLines context txts =
         ( '>' : ' ' : line ) : rest ->
             case context of
                 Just (CodeBlock list) ->
-                    parseLines (Just $ CodeBlock $ list <> [trim line]) rest
+                    parseLines (Just $ CodeBlock $ list <> [line]) rest
                 _ ->
-                    maybe id (:) context $ parseLines (Just $ CodeBlock [trim line]) rest
+                    maybe id (:) context $ parseLines (Just $ CodeBlock [line]) rest
 
         -- Paragraph
         currentLine : rest ->
@@ -114,9 +116,9 @@ ex4 =
     [ Heading 1 "Compiling programs with ghc"
     , Paragraph (
         concat
-            [ "Running ghc invokes the Glasgow Haskell Compiler (GHC),\n"
-            , "and can be used to compile Haskell modules and programs into native\n"
-            , "executables and libraries.\n"
+            [ "Running ghc invokes the Glasgow Haskell Compiler (GHC), "
+            , "and can be used to compile Haskell modules and programs into native "
+            , "executables and libraries."
             ]
     )
     , Paragraph "Create a new Haskell source file named hello.hs, and write the following code in it:"
