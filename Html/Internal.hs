@@ -2,6 +2,8 @@
 module Html.Internal
 where
 
+import Numeric.Natural
+
 newtype Html = Html String
 
 newtype Structure = Structure String
@@ -19,11 +21,17 @@ getStructureString a =
 el :: String -> String -> String
 el tag inner = "<" <> tag <> ">" <> inner <> "</" <> tag <> ">"
 
+empty_ :: Structure
+empty_ = Structure ""
+
 p_ :: String -> Structure
 p_ = Structure . el "p" . escape
 
 h1_ :: String -> Structure
 h1_ = Structure . el "h1" . escape
+
+h_ :: Natural -> String -> Structure
+h_ n = Structure . el ("h" <> show n) . escape
 
 ul_ :: [Structure] -> Structure
 ul_ =  Structure . el "ul" . concatMap (el "li" . getStructureString)
@@ -46,6 +54,9 @@ instance Semigroup Structure where
     (<>) c1 c2 =
         Structure $ getStructureString c1 <> getStructureString c2
 
+instance Monoid Structure where
+    mempty = Structure ""
+
 render :: Html -> String
 render html =
     case html of
@@ -64,3 +75,9 @@ escape =
                 _ -> [c]
     in
         concatMap escapeChar
+
+-- concatStructure :: [Structure] -> Structure
+-- concatStructure list =
+--     case list of
+--         [] -> empty_
+--         x : xx -> x <> concatStructure xx
