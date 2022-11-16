@@ -16,7 +16,7 @@ data Structure
     = Heading Natural String
     | Paragraph String
     | UnorderedList [String]
-    | OrdereedList [String]
+    | OrderedList [String]
     | CodeBlock [String]
     deriving Show
 
@@ -37,6 +37,16 @@ parseLines context txts =
                     parseLines (Just $ UnorderedList $ list <> [trim line]) rest
                 _ ->
                     maybe id (:) context $ parseLines (Just $ UnorderedList [trim line]) rest
+
+        -- Ordered List
+        ( '#' : ' ' : line ) : rest ->
+            case context of
+                Just (OrderedList list) ->
+                    parseLines (Just $ OrderedList $ list <> [trim line]) rest
+                _ ->
+                    maybe id (:) context $ parseLines (Just $ OrderedList [trim line]) rest
+
+        -- Code Block
 
         -- Paragraph
         currentLine : rest ->
