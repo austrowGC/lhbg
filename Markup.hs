@@ -18,7 +18,7 @@ data Structure
     | UnorderedList [String]
     | OrderedList [String]
     | CodeBlock [String]
-    deriving Show
+    deriving (Show, Eq)
 
 parse = parseLines Nothing . lines
 
