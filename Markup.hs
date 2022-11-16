@@ -47,6 +47,12 @@ parseLines context txts =
                     maybe id (:) context $ parseLines (Just $ OrderedList [trim line]) rest
 
         -- Code Block
+        ( '>' : ' ' : line ) : rest ->
+            case context of
+                Just (CodeBlock list) ->
+                    parseLines (Just $ CodeBlock $ list <> [trim line]) rest
+                _ ->
+                    maybe id (:) context $ parseLines (Just $ CodeBlock [trim line]) rest
 
         -- Paragraph
         currentLine : rest ->
