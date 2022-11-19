@@ -2,6 +2,7 @@ module Markup
     ( Document
     , Structure(..)
     , print
+    , parse
     )
     where
 import Numeric.Natural
